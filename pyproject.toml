@@ -1,0 +1,61 @@
+[build-system]
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
+
+[project]
+name = "rtd-testing"
+dynamic = ["version"]
+description = "RTD testing"
+readme = {file = "README.rst", content-type = "text/x-rst"}
+license = {file = "LICENSE"}
+requires-python = ">=3.10"
+dependencies = []
+
+# here so that standalone setuptools_scm also works
+[tool.setuptools_scm]
+version_file = "src/rtd_testing/_version.py"
+version_scheme = "release-branch-semver"
+
+[tool.hatch.version]
+source = "vcs"
+# default: guess-next-dev, alternatives: release-branch-semver, post-release, no-guess-dev
+raw-options = { version_scheme = "guess-next-dev" }
+
+[tool.hatch.build.hooks.vcs]
+version-file = "src/rtd_testing/_version.py"
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/src",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src"]
+
+[tool.hatch.envs.test]
+extra-dependencies = ["pytest"]
+
+[tool.hatch.envs.docs]
+extra-dependencies = [
+    "pydata-sphinx-theme",
+    "sphinx",
+    "sphinx-autoapi",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["test"]
+addopts = ["--import-mode=importlib", "-q", "-ra"]
+
+[tool.black]
+include = '\.pyi?$'
+extend-exclude ='''
+(
+  ^test/data
+)
+'''
+
+[tool.mypy]
+python_version = "3.12"
+ignore_missing_imports = true
+check_untyped_defs = true
+files = "src"
